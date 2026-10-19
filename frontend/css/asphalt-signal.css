@@ -1,0 +1,521 @@
+:root {
+  --bg-asphalt: #0D0F12;
+  --bg-concrete: #16191E;
+  --bg-elevated: #1E2229;
+  --border-tech: #262A33;
+  --signal-amber: #F59E0B;
+  --signal-yellow: #FACC15;
+  --sensor-green: #10B981;
+  --traffic-red: #EF4444;
+  --text-main: #F9FAFB;
+  --text-muted: #9CA3AF;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-asphalt);
+  color: var(--text-main);
+  font-family: 'Space Grotesk', sans-serif;
+  line-height: 1.45;
+  padding-bottom: 40px;
+}
+
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Top Header */
+header {
+  background: linear-gradient(180deg, #16191E 0%, #0D0F12 100%);
+  border-bottom: 2px solid var(--signal-amber);
+  padding: 16px 24px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-badge {
+  background: var(--signal-amber);
+  color: #0D0F12;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
+}
+
+.brand h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.revenue-bar {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.metric-pill {
+  background: var(--bg-concrete);
+  border: 1px solid var(--border-tech);
+  padding: 8px 14px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.metric-pill strong {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+}
+
+.metric-platform strong {
+  color: var(--signal-yellow);
+}
+
+.metric-partner strong {
+  color: var(--sensor-green);
+}
+
+/* Main Workspace Layout */
+.workspace {
+  display: grid;
+  grid-template-columns: 380px 1fr 440px;
+  gap: 18px;
+  padding: 20px 24px;
+  max-width: 1680px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1360px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  background: var(--bg-concrete);
+  border: 1px solid var(--border-tech);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  background: var(--bg-elevated);
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border-tech);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-header h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tag {
+  font-size: 0.72rem;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.tag-amber {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--signal-amber);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.tag-green {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--sensor-green);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.tag-red {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--traffic-red);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.panel-body {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Mercosul Plate Badge */
+.mercosul-plate {
+  display: inline-flex;
+  flex-direction: column;
+  background: #F9FAFB;
+  color: #111315;
+  border: 2px solid #111315;
+  border-radius: 6px;
+  overflow: hidden;
+  width: 145px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.45);
+  font-family: 'JetBrains Mono', monospace;
+  flex-shrink: 0;
+}
+
+.mercosul-header {
+  background: #003399;
+  color: #FFFFFF;
+  font-size: 0.55rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  display: flex;
+  justify-content: space-between;
+  letter-spacing: 1px;
+}
+
+.mercosul-number {
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 4px 6px;
+  letter-spacing: 2px;
+  color: #0D0F12;
+}
+
+/* Forms & Inputs */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+input,
+select {
+  background: var(--bg-asphalt);
+  border: 1px solid var(--border-tech);
+  color: var(--text-main);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9rem;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--signal-amber);
+}
+
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-amber {
+  background: var(--signal-amber);
+  color: #0D0F12;
+}
+
+.btn-amber:hover {
+  background: var(--signal-yellow);
+}
+
+.btn-green {
+  background: var(--sensor-green);
+  color: #0D0F12;
+}
+
+.btn-red {
+  background: var(--traffic-red);
+  color: #FFFFFF;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border-tech);
+  color: var(--text-main);
+}
+
+.btn-outline:hover {
+  border-color: var(--signal-amber);
+  color: var(--signal-amber);
+}
+
+/* Simulated Map Radar */
+.radar-map {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.08) 0%, transparent 65%),
+    linear-gradient(to right, #191D24 1px, transparent 1px),
+    linear-gradient(to bottom, #191D24 1px, transparent 1px);
+  background-size: 100% 100%, 28px 28px, 28px 28px;
+  background-color: #0A0C0E;
+  border: 1px solid var(--border-tech);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lot-card {
+  background: rgba(22, 25, 30, 0.92);
+  border: 1px solid var(--border-tech);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+
+.lot-card.selected {
+  border-color: var(--signal-amber);
+  box-shadow: 0 0 0 1px var(--signal-amber);
+}
+
+.lot-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.lot-price-tag {
+  background: var(--signal-amber);
+  color: #0D0F12;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+/* Active Reservation Box */
+.reservation-box {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid var(--signal-amber);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.timer-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--signal-yellow);
+  text-align: center;
+  padding: 6px;
+  background: #0D0F12;
+  border-radius: 8px;
+  border: 1px solid var(--border-tech);
+}
+
+/* Bento Grid of Spots */
+.spots-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.spot-cell {
+  background: var(--bg-asphalt);
+  border: 1px solid var(--border-tech);
+  border-top: 4px solid var(--sensor-green);
+  border-radius: 8px;
+  padding: 10px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 82px;
+  justify-content: center;
+}
+
+.spot-cell.RESERVED {
+  border-top-color: var(--signal-amber);
+  background: rgba(245, 158, 11, 0.07);
+}
+
+.spot-cell.OCCUPIED {
+  border-top-color: var(--traffic-red);
+  background: rgba(239, 68, 68, 0.07);
+}
+
+.spot-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.spot-status {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Tree Visualizer & JSON Box */
+.code-box {
+  background: #08090B;
+  border: 1px solid var(--border-tech);
+  border-radius: 8px;
+  padding: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.76rem;
+  color: #D1D5DB;
+  max-height: 230px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.tree-node {
+  padding: 6px 10px;
+  border-left: 2px solid var(--signal-amber);
+  margin-left: 10px;
+  margin-top: 4px;
+  background: rgba(255, 255, 255, 0.02);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+}
+
+/* Gate Feed Log */
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.feed-item {
+  background: var(--bg-asphalt);
+  border-left: 3px solid var(--signal-amber);
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Modal Pop-up for 15-min No-Show Rule */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 20px;
+}
+
+.modal-backdrop.active {
+  display: flex;
+}
+
+.modal-card {
+  background: var(--bg-concrete);
+  border: 2px solid var(--signal-amber);
+  border-radius: 14px;
+  max-width: 460px;
+  width: 100%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85);
+}
+
+.modal-warning-banner {
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid var(--signal-amber);
+  color: var(--signal-yellow);
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.98rem;
+  text-align: center;
+}
+
+.split-breakdown {
+  background: var(--bg-asphalt);
+  border: 1px solid var(--border-tech);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 0.83rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.split-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.plate-photo-preview {
+  background: #090B0E;
+  border: 1px dashed var(--border-tech);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}

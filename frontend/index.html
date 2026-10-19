@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VagaFlow ALPR — Workspace Integrado (App B2C + Câmera Tree Search + Site B2B)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/asphalt-signal.css" />
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header>
+    <div class="brand">
+      <span class="brand-badge">ALPR // VAGAFLOW</span>
+      <div>
+        <h1>Ambiente Integrado — App Motorista + Câmera Árvore + Dashboard Estacionamento</h1>
+        <p style="font-size: 0.78rem; color: var(--text-muted);">Conceito Visual "Asphalt & Signal" • Taxa Fixa da Plataforma: R$ 1,00 por operação</p>
+      </div>
+    </div>
+
+    <div class="revenue-bar">
+      <span class="tag tag-amber" id="backendConnectionBadge">VERIFICANDO API...</span>
+      <div class="metric-pill metric-platform">
+        <span>Sua Receita (Take Rate R$ 1/op):</span>
+        <strong id="platformRevenue">R$ 0,00</strong>
+      </div>
+      <div class="metric-pill metric-partner">
+        <span>Receita Donos de Estacionamento:</span>
+        <strong id="partnerRevenue">R$ 0,00</strong>
+      </div>
+      <div class="metric-pill">
+        <span>Operações Liquidadas:</span>
+        <strong id="totalOps">0</strong>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN 3-COLUMN WORKSPACE -->
+  <main class="workspace">
+
+    <!-- COLUNA 1: APP DO MOTORISTA (B2C) -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2>📱 App do Motorista (B2C)</h2>
+        <span class="tag tag-amber">Mobile View</span>
+      </div>
+      <div class="panel-body">
+
+        <!-- Dados do Motorista & Placa -->
+        <div class="form-group">
+          <label>Motorista Cadastrado</label>
+          <input type="text" id="driverName" value="André Luís" oninput="syncDriverPlatePreview()" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Placa do Veículo</label>
+            <input type="text" id="driverPlate" class="mono" maxlength="7" value="BRA2E19" oninput="syncDriverPlatePreview()" style="text-transform: uppercase;" />
+          </div>
+          <div class="form-group">
+            <label>Cor do Carro</label>
+            <select id="driverColor" onchange="syncDriverPlatePreview()">
+              <option value="PRATA">Prata Metálico</option>
+              <option value="PRETO">Preto Carbono</option>
+              <option value="BRANCO">Branco Polar</option>
+              <option value="VERMELHO">Vermelho</option>
+              <option value="AZUL">Azul</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Foto da Placa (Frente ou Traseira para Validação OCR)</label>
+          <div class="plate-photo-preview">
+            <div class="mercosul-plate">
+              <div class="mercosul-header"><span>BRASIL</span><span>MERCOSUL</span></div>
+              <div class="mercosul-number" id="platePreviewText">BRA2E19</div>
+            </div>
+            <div style="font-size: 0.76rem; color: var(--text-muted);">
+              <div>📸 <strong style="color: var(--text-main);" id="photoAngleText">Foto Traseira Anexada</strong></div>
+              <div>Cor vinculada: <span class="mono" id="colorPreviewText" style="color: var(--signal-amber);">PRATA</span></div>
+              <button class="btn btn-outline" style="margin-top: 6px; padding: 4px 8px; font-size: 0.72rem;" onclick="togglePhotoAngle()">Alternar Frente/Traseira</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mapa Radar de Estacionamentos -->
+        <div class="form-group">
+          <label>Estacionamentos & Comércios Próximos (Tempo Real)</label>
+          <div class="radar-map" id="lotsListContainer"></div>
+        </div>
+
+        <!-- Caixa de Reserva Ativa (aparece quando reservado) -->
+        <div id="activeReservationContainer" style="display: none;"></div>
+
+      </div>
+    </section>
+
+    <!-- COLUNA 2: MOTOR ALPR + BUSCA EM ÁRVORE + TROCA DE JSON (JAVA SPRING SIMULATOR) -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2>📷 Câmera ALPR & Busca em Árvore (API Spring Boot)</h2>
+        <span class="tag tag-green">Edge + Backend Engine</span>
+      </div>
+      <div class="panel-body">
+
+        <!-- Simulador de Cancela -->
+        <div style="background: var(--bg-asphalt); border: 1px solid var(--border-tech); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 700; font-size: 0.9rem;">Simulador Óptico de Entrada / Saída</span>
+            <span class="tag tag-amber" id="gateStatusBadge">CANCELA FECHADA</span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Placa Lida pela Câmera (OCR)</label>
+              <input type="text" id="cameraPlateInput" class="mono" value="BRA2E19" maxlength="7" style="text-transform: uppercase;" />
+            </div>
+            <div class="form-group">
+              <label>Cor Detectada na Câmera</label>
+              <select id="cameraColorInput">
+                <option value="PRATA">PRATA</option>
+                <option value="PRETO">PRETO</option>
+                <option value="BRANCO">BRANCO</option>
+                <option value="VERMELHO">VERMELHO</option>
+                <option value="AZUL">AZUL</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-green" style="flex: 1;" onclick="simulateCameraEvent('ENTRY')">🚗 Simular ENTRADA na Cancela</button>
+            <button class="btn btn-amber" style="flex: 1;" onclick="simulateCameraEvent('EXIT')">🏁 Simular SAÍDA + Cobrança</button>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-outline" style="flex: 1; font-size: 0.78rem;" onclick="simulateAvulsoCar()">➕ Simular Carro Avulso (Sem App)</button>
+            <button class="btn btn-outline" style="flex: 1; font-size: 0.78rem;" onclick="simulateFuzzyOcrMatch()">🔍 Testar Erro de 1 Letra no OCR (Busca na Árvore)</button>
+          </div>
+        </div>
+
+        <!-- Visualização da Árvore de Busca (Trie / Prefixos + Cor) -->
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label>Estrutura em Árvore (Trie: Cor ➔ Prefixo da Placa) no Estacionamento</label>
+            <span class="mono" style="font-size: 0.72rem; color: var(--sensor-green);">Complexidade: O(L) | L = 7 chars</span>
+          </div>
+          <div class="code-box" id="treeVisualizerBox"></div>
+        </div>
+
+        <!-- Payload JSON Trocado entre App <-> API Java Spring <-> Estacionamento -->
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label>Último JSON Trocado (API Spring Boot ⇄ Câmera do Pátio)</label>
+            <span class="mono" style="font-size: 0.72rem; color: var(--signal-amber);">POST /api/v1/reservations/sync-gate</span>
+          </div>
+          <div class="code-box" id="jsonPayloadBox"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- COLUNA 3: SITE / DASHBOARD DO DONO DO ESTACIONAMENTO (B2B) -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2>🏢 Portal do Estacionamento (B2B)</h2>
+        <span class="tag tag-amber">Partner Web</span>
+      </div>
+      <div class="panel-body">
+
+        <!-- Seletor / Cadastro de Estacionamento -->
+        <div style="background: var(--bg-asphalt); border: 1px solid var(--border-tech); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+          <label>Cadastrar Novo Estacionamento / Comércio</label>
+          <div class="form-row">
+            <input type="text" id="newLotName" placeholder="Ex: Estacionamento Matriz" />
+            <input type="number" id="newLotRate" placeholder="Valor Dono (ex: 7)" min="1" value="7" />
+          </div>
+          <div class="form-row">
+            <input type="number" id="newLotSpots" placeholder="Qtd Vagas (ex: 8)" min="2" max="16" value="8" />
+            <button class="btn btn-outline" onclick="createNewParkingLot()">+ Cadastrar Pátio</button>
+          </div>
+          <p style="font-size: 0.74rem; color: var(--text-muted);">
+            💡 Se o dono cadastra <strong>R$ 7,00/h</strong>, o app exibe automaticamente <strong>R$ 8,00/h</strong> (R$ 7 dono + R$ 1 sua taxa). No-show de 15 min cobra <strong>R$ 4,00</strong> (R$ 3 dono + R$ 1 seu).
+          </p>
+        </div>
+
+        <!-- Mapa de Vagas (Bento Grid) -->
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label id="b2bLotTitle">Pátio Selecionado: Estacionamento Centro</label>
+            <span class="mono" style="font-size: 0.75rem;" id="b2bOccupancySummary"></span>
+          </div>
+          <div class="spots-grid" id="b2bSpotsGrid"></div>
+        </div>
+
+        <!-- Live Gate Feed & Financeiro -->
+        <div class="form-group">
+          <label>Live Gate Feed & Split Financeiro em Tempo Real</label>
+          <div class="feed-list" id="gateFeedList"></div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL POP-UP OBRIGATÓRIO ANTES DE RESERVAR (REGRA DOS 15 MINUTOS) -->
+  <div class="modal-backdrop" id="reserveModal">
+    <div class="modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="tag tag-amber">Aviso de Reserva Instantânea</span>
+        <span class="mono" style="font-size: 0.78rem; color: var(--text-muted);">TTL: 15:00 MIN</span>
+      </div>
+
+      <h3 style="font-size: 1.2rem;">Confirmar Reserva de Vaga?</h3>
+
+      <!-- Frase exata obrigatoria -->
+      <div class="modal-warning-banner" id="modalExactWarning">
+        "Se em 15minutos nao estiver na vaga é cobrado metade do valor minimo!"
+      </div>
+
+      <div class="split-breakdown" id="modalPriceBreakdown"></div>
+
+      <div style="display: flex; gap: 10px; margin-top: 4px;">
+        <button class="btn btn-outline" style="flex: 1;" onclick="closeReserveModal()">Cancelar</button>
+        <button class="btn btn-amber" style="flex: 1;" onclick="confirmReservation()">Ciente, Reservar Agora</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./js/tree-visualizer.js"></script>
+  <script src="./js/api-client.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>

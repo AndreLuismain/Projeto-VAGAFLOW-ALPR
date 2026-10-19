@@ -1,0 +1,109 @@
+{
+  "apiVersion": "v1",
+  "baseUrl": "http://localhost:8080/api/v1",
+  "businessConstants": {
+    "platformFixedFeeBRL": 1.00,
+    "reservationTtlMinutes": 15,
+    "noShowPenaltyRatio": 0.50,
+    "mandatoryPopupWarning": "Se em 15minutos nao estiver na vaga é cobrado metade do valor minimo!"
+  },
+  "contracts": {
+    "1_reservationSyncGate": {
+      "endpoint": "POST /api/v1/reservations/sync-gate",
+      "description": "Cria uma reserva temporaria de 15 minutos, trava a vaga como RESERVED e indexa o veiculo na Arvore Trie da camera do estacionamento.",
+      "request": {
+        "lotId": "LOT-01",
+        "driverName": "André Luís",
+        "licensePlate": "BRA2E19",
+        "vehicleColor": "PRATA",
+        "photoAngle": "TRASEIRA"
+      },
+      "response": {
+        "event": "RESERVATION_CREATED_LOCK_SPOT",
+        "reservationId": "RES-482910",
+        "timestamp": "2026-10-19T12:00:00Z",
+        "expiresAt": "2026-10-19T12:15:00Z",
+        "ttlMinutes": 15,
+        "customerVehicle": {
+          "driverName": "André Luís",
+          "licensePlate": "BRA2E19",
+          "vehicleColor": "PRATA",
+          "platePhotoReference": {
+            "position": "TRASEIRA",
+            "url": "https://cdn.vagaflow.app/plates/BRA2E19_traseira.jpg",
+            "ocrPreValidated": true
+          }
+        },
+        "parkingLotSync": {
+          "lotId": "LOT-01",
+          "allocatedSpotCode": "A-03",
+          "temporaryLockStatus": "RESERVED",
+          "indexedInColorPrefixTree": true,
+          "pricingRule": {
+            "minimumHourlyTotalBRL": 8.00,
+            "ownerBaseShareBRL": 7.00,
+            "platformFixedFeeBRL": 1.00,
+            "noShow15MinPenaltyTotalBRL": 4.00,
+            "noShowOwnerShareBRL": 3.00,
+            "noShowPlatformShareBRL": 1.00
+          }
+        }
+      }
+    },
+    "2_reservationExpiredNoShow": {
+      "endpoint": "POST /api/v1/reservations/{reservationId}/trigger-no-show",
+      "description": "Disparado automaticamente pelo ReservationNoShowScheduler apos 15 minutos sem leitura na camera ENTRY ou via gatilho de simulacao.",
+      "response": {
+        "event": "RESERVATION_EXPIRED_NO_SHOW_15MIN",
+        "reservationId": "RES-482910",
+        "licensePlate": "BRA2E19",
+        "spotReleased": "A-03",
+        "automaticSplitCharge": {
+          "chargedFromCustomerBRL": 4.00,
+          "transferredToParkingOwnerBRL": 3.00,
+          "transferredToPlatformBRL": 1.00,
+          "ruleApplied": "50% do valor mínimo de 1h (R$ 1,00 fixo da plataforma preservado)"
+        }
+      }
+    },
+    "3_alprGateEntryMatched": {
+      "endpoint": "POST /api/v1/gate/events",
+      "description": "Evento de leitura optica da camera na cancela de entrada (ENTRY).",
+      "request": {
+        "lotId": "LOT-01",
+        "direction": "ENTRY",
+        "detectedPlate": "BRA2E19",
+        "detectedColor": "PRATA"
+      },
+      "response": {
+        "event": "ALPR_GATE_ENTRY_MATCHED",
+        "treeLookupStrategy": "EXACT_TREE_MATCH (O(7))",
+        "detectedPlate": "BRA2E19",
+        "detectedColor": "PRATA",
+        "spotActivated": "A-03",
+        "gateCommand": "OPEN_BARRIER_IMMEDIATELY"
+      }
+    },
+    "4_alprGateExitCheckout": {
+      "endpoint": "POST /api/v1/gate/events",
+      "description": "Evento de leitura optica da camera na cancela de saida (EXIT) com liquidacao e split financeiro.",
+      "request": {
+        "lotId": "LOT-01",
+        "direction": "EXIT",
+        "detectedPlate": "BRA2E19",
+        "detectedColor": "PRATA"
+      },
+      "response": {
+        "event": "ALPR_GATE_EXIT_CHECKOUT",
+        "treeLookupStrategy": "EXACT_TREE_MATCH (O(7))",
+        "licensePlate": "BRA2E19",
+        "releasedSpot": "A-03",
+        "billingSplit": {
+          "totalChargedBRL": 8.00,
+          "parkingOwnerShareBRL": 7.00,
+          "platformFixedFeeBRL": 1.00
+        }
+      }
+    }
+  }
+}

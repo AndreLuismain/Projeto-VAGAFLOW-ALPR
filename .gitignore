@@ -1,0 +1,33 @@
+# Maven & Java Build Artifacts
+target/
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.log
+hs_err_pid*
+replay_pid*
+
+# Maven Wrapper (keep wrapper script if used, ignore temp)
+.mvn/timing.properties
+
+# IDEs and Editors
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+.factorypath
+bin/
+
+# OS Specific
+.DS_Store
+Thumbs.db
+
+# Databases & Local Logs
+*.db
+*.mv.db
+*.trace.db
